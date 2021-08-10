@@ -54,7 +54,7 @@ message GetRepositoryResponse {
   Repository repository = 1;
 }
 
-message GetCommitsReponse {
+message GetCommitsResponse {
   // Batched
   repeated Commit commits = 1;
 }
@@ -79,9 +79,9 @@ service RepositoryService {
   // Get repository commits, references and head informaiton. 
   rpc GetRepository(TargetRequest) returns (GetRepositoryResponse);
   // Stream batched commits
-  rpc StreamCommits(TargetRequest) returns (stream GetCommitsReponse);
+  rpc GetCommits(TargetRequest) returns (stream GetCommitsResponse);
   // Stream batched references
-  rpc GetReferences(TargetRequest) returns (GetReferencesResponse);
+  rpc GetReferences(TargetRequest) returns (stream GetReferencesResponse);
   // Get head information
   rpc GetHead(TargetRequest) returns (GetHeadResponse);
   // Watch repository changes
