@@ -1,0 +1,89 @@
+syntax = "proto3";
+package pb;
+
+import "google/protobuf/timestamp.proto";
+option go_package = "src/protobuf";
+
+message Contact {
+  string name = 1;
+  string email = 2;
+}
+
+message Commit {
+ string hash = 1;
+ string summary = 2;
+ string body = 3;
+ Contact author = 4;
+ Contact committer = 5;
+ repeated string parents = 6;
+ google.protobuf.Timestamp commit_time = 7;
+}
+
+message Reference {
+  string name = 1;
+  string shorthand = 2;
+  string hash = 3;
+  enum Type {
+    InvalidReference=0;
+    HashReference=1;
+    SymbolicReference=2;
+  }
+  Type type = 4;
+  bool is_remote = 5;
+  bool is_branch = 6;
+}
+
+message Head {
+  string hash = 1;
+  string name = 2;
+  string shorthand = 3;
+}
+
+message Repository {
+  string path = 1;
+  repeated Commit commits = 2;
+  repeated Reference references = 3;
+  Head head = 4;
+}
+
+message TargetRequest {
+  string path = 1;
+}
+
+message GetRepositoryResponse {
+  Repository repository = 1;
+}
+
+message GetCommitsReponse {
+  // Batched
+  repeated Commit commits = 1;
+}
+
+message GetReferencesResponse {
+  // Batched
+  repeated Reference references = 1;
+}
+
+message GetHeadResponse {
+  Head head = 1;
+}
+
+message WatchResponse {
+  // Head hash
+  Head head = 1;
+  // New commits
+  repeated Commit commits = 2;
+}
+
+service RepositoryService {
+  // Get repository commits, references and head informaiton. 
+  rpc GetRepository(TargetRequest) returns (GetRepositoryResponse);
+  // Stream batched commits
+  rpc StreamCommits(TargetRequest) returns (stream GetCommitsReponse);
+  // Stream batched references
+  rpc GetReferences(TargetRequest) returns (GetReferencesResponse);
+  // Get head information
+  rpc GetHead(TargetRequest) returns (GetHeadResponse);
+  // Watch repository changes
+  rpc Watch(stream TargetRequest) returns (stream WatchResponse);
+}
