@@ -46,9 +46,8 @@ message Repository {
   Head head = 4;
 }
 
-message TargetRequest {
-  string path = 1;
-}
+// Repository path will be send via metadata
+message EmptyRequest {}
 
 message GetRepositoryResponse {
   Repository repository = 1;
@@ -75,15 +74,22 @@ message WatchResponse {
   repeated Commit commits = 2;
 }
 
+message CommandRequest {
+  string command = 1;
+}
+
+message CommandResponse {
+  string output = 1;
+}
+
+
 service RepositoryService {
   // Get repository commits, references and head informaiton. 
-  rpc GetRepository(TargetRequest) returns (GetRepositoryResponse);
-  // Stream batched commits
-  rpc GetCommits(TargetRequest) returns (stream GetCommitsResponse);
-  // Stream batched references
-  rpc GetReferences(TargetRequest) returns (stream GetReferencesResponse);
+  rpc GetRepository(EmptyRequest) returns (GetRepositoryResponse);
   // Get head information
-  rpc GetHead(TargetRequest) returns (GetHeadResponse);
+  rpc GetHead(EmptyRequest) returns (GetHeadResponse);
   // Watch repository changes
-  rpc Watch(stream TargetRequest) returns (stream WatchResponse);
+  // rpc Watch(EmptyRequest) returns (stream WatchResponse);
+  // Repository path is passed by metadata
+  // rpc Command(CommandRequest) returns (CommandResponse);
 }
