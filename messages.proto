@@ -4,7 +4,15 @@ package pb;
 import "google/protobuf/timestamp.proto";
 option go_package = "src/protobuf";
 
-message Contact {
+enum ObjectType {
+  INVALID = 0;
+	COMMIT = 1;
+	TREE = 2;
+	BLOB = 3;
+	TAG = 4;
+}
+
+message Signature {
   string name = 1;
   string email = 2;
 }
@@ -13,8 +21,8 @@ message Commit {
  string hash = 1;
  string summary = 2;
  string body = 3;
- Contact author = 4;
- Contact committer = 5;
+ Signature author = 4;
+ Signature committer = 5;
  repeated string parents = 6;
  google.protobuf.Timestamp commit_time = 7;
 }
@@ -31,6 +39,16 @@ message Reference {
   Type type = 4;
   bool is_remote = 5;
   bool is_branch = 6;
+  bool is_tag = 7;
+}
+
+message Tag {
+  string hash = 1;
+  string target = 2;
+  ObjectType target_type = 3;
+  string name = 4;
+  Signature tagger = 5;
+  string message = 6;
 }
 
 message Head {
@@ -44,6 +62,7 @@ message Repository {
   repeated Commit commits = 2;
   repeated Reference references = 3;
   Head head = 4;
+  repeated Tag tags = 5;
 }
 
 // Repository path will be send via metadata
