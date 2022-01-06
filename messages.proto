@@ -65,8 +65,10 @@ message Repository {
   repeated Tag tags = 5;
 }
 
-// Repository path will be send via metadata
-message EmptyRequest {}
+
+message GetRepositoryRequest {
+  string path = 1;
+}
 
 message GetRepositoryResponse {
   Repository repository = 1;
@@ -80,6 +82,10 @@ message GetCommitsResponse {
 message GetReferencesResponse {
   // Batched
   repeated Reference references = 1;
+}
+
+message GetHeadRequest {
+  string path = 1;
 }
 
 message GetHeadResponse {
@@ -104,9 +110,9 @@ message CommandResponse {
 
 service RepositoryService {
   // Get repository commits, references and head informaiton. 
-  rpc GetRepository(EmptyRequest) returns (GetRepositoryResponse);
+  rpc GetRepository(GetRepositoryRequest) returns (GetRepositoryResponse);
   // Get head information
-  rpc GetHead(EmptyRequest) returns (GetHeadResponse);
+  rpc GetHead(GetHeadRequest) returns (GetHeadResponse);
   // Watch repository changes
   // rpc Watch(EmptyRequest) returns (stream WatchResponse);
   // Repository path is passed by metadata
